@@ -2,6 +2,10 @@
 
 This Django-based video-sharing platform provides preliminary form analysis and is a starting point for other users to comment on weightlifting form. iForm enables users to upload, share, and comment on workout videos, similar to popular social media platforms, to decrease the likelihood of form-related injuries while weightlifting. It includes features such as user authentication, video uploads, comments, likes, and a follower system.
 
+<img width="1508" alt="Screenshot 2024-05-29 at 5 42 44 PM" src="https://github.com/vikranthnara/iForm/assets/64695750/2a6e00f3-3cb1-4d56-952b-9e81492c8ddd">
+<img width="1506" alt="Screenshot 2024-05-29 at 5 44 27 PM" src="https://github.com/vikranthnara/iForm/assets/64695750/10ae76f1-dc4f-4df7-9fd9-7217c7406385">
+
+
 # Features
 User Authentication: Register, login, and manage user profiles.
 Video Uploads: Users can upload videos. 
