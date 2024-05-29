@@ -1,0 +1,5 @@
+<div class="comment">
+    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+    <span class="likes">({{ comment.likes.count }} likes)</span>
+    <button class="like-btn" data-comment-id="{{ comment.id }}">Like</button>
+</div>

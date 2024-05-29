@@ -1,0 +1,78 @@
+<!-- templates/search_results.html -->
+{% extends "main/base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{query}}</h1>
+    
+    {% if users %}
+        <h2>Users</h2>
+        <div class="list-group mb-4">
+            {% for user in users %}
+                <a href="{% url 'profile' user.username %}" class="list-group-item list-group-item-action">
+                    {{ user.username }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if videos %}
+        <div class="row">
+            {% for video in videos %}
+    <div class="col-lg-12 video-card">
+        <div class="card mb-4 shadow">
+            <div class="row no-gutters">
+                <div class="col-md-9">
+                    <video controls class="w-100">
+                        <source src="{{ video.file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="col-md-3 comments-sidebar">
+                    <div class="card-body">
+                        <h4 class="card-title"><strong>{{video.user.username}}</strong></h4>
+                        <p class="card-text"><strong>Exercise: </strong> {{ video.exercise_name }}</p>
+                        <p class="card-text"><strong>Analysis: </strong> {{ video.analysis }}</p>
+                        <hr class="custom-hr">
+                    </div>
+                    <div style="overflow-y: auto;">
+                        {% for comment in video.comments.all %}
+                            <div class="comment">
+                                <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                                <!-- Like form -->
+                                <form action="{% url 'like_comment' comment.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">❤️ ({{ comment.total_likes }})</button>
+                                </form>
+                                {% if is_own_profile %}
+                                <!-- Delete comment form -->
+                                <form action="{% url 'delete_comment' comment.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">🗑️</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <form method="post" action="{% url 'add_comment' video.id %}" class="d-flex">
+                                {% csrf_token %}
+                                <input type="text" name="text" class="form-control flex-grow-1" placeholder="Add a comment..." required>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">💬</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if not users and not videos %}
+        <p>No results found for "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}

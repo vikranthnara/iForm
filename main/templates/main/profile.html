@@ -1,0 +1,126 @@
+<!-- templates/main/profile.html -->
+{% extends "main/base.html" %}
+{% block title %}Profile{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">{{ profile_user.username }}'s Profile</h1>
+    <!-- Horizontal box for followers and following -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <a href="{% url 'followers_list' profile_user.username %}">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Followers</h5>
+                        <p class="card-text">{{ followers_count }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'following_list' profile_user.username %}">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Following</h5>
+                        <p class="card-text">{{ following_count }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!-- Bio box -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <p class="card-text">{{ bio }}</p>
+                    {% if profile_user != request.user %}
+                        {% if is_private %}
+                            {% if follow_request_sent %}
+                                <p>Follow request sent</p>
+                            {% else %}
+                                <form method="post" action="{% url 'follow_user' profile_user.username %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Request to Follow</button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <form method="post" action="{% url 'follow_user' profile_user.username %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    {% if is_following %}Unfollow{% else %}Follow{% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'update_profile' %}" class="btn btn-secondary">Edit Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- User videos -->
+    {% if can_view_videos %}
+    <div id="video-container" class="row justify-content-center">
+        {% for video in videos %}
+        <div class="col-lg-12 video-card">
+            <div class="card mb-4 shadow">
+                <div class="row no-gutters">
+                    <div class="col-md-9">
+                        <video controls class="w-100">
+                            <source src="{{ video.file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="col-md-3 comments-sidebar">
+                        <div class="card-body d-flex">
+                            <div>
+                                <h4 class="card-title mb-0"><strong>{{ video.user.username }}</strong></h4>
+                                <p class="card-text"><strong>Exercise: </strong> {{ video.exercise_name }}</p>
+                                <p class="card-text"><strong>Analysis: </strong> {{ video.analysis }}</p>
+                            </div>
+                            <form method="post" action="{% url 'share_video' video.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">➣</button>
+                            </form>
+                            <hr class="custom-hr">
+                        </div>
+                        <div style="overflow-y: auto;">
+                            {% for comment in video.comments.all %}
+                                <div class="comment">
+                                    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                                    <!-- Like form -->
+                                    <form action="{% url 'like_comment' comment.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">❤️ ({{ comment.total_likes }})</button>
+                                    </form>
+                                    {% if is_own_profile %}
+                                    <!-- Delete comment form -->
+                                    <form action="{% url 'delete_comment' comment.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">🗑️</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                                <form method="post" action="{% url 'add_comment' video.id %}" class="d-flex">
+                                    {% csrf_token %}
+                                    <input type="text" name="text" class="form-control flex-grow-1" placeholder="Add a comment..." required>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">💬</button>
+                                    </div>
+                                    
+                                </form> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>This profile is private or you do not have permission to view these videos.</p>
+    {% endif %}
+</div>
+{% endblock %}

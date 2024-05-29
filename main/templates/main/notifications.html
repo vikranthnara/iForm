@@ -1,0 +1,29 @@
+{% extends "main/base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Notifications</h1>
+    {% if follow_requests %}
+        <h2>Follow Requests</h2>
+        <ul class="list-group">
+            {% for request in follow_requests %}
+            <li class="list-group-item">
+                {{ request.from_user.username }} wants to follow you
+                <div class="float-right">
+                    <form method="post" action="{% url 'accept_follow_request' request.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                    </form>
+                    <form method="post" action="{% url 'decline_follow_request' request.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No new notifications.</p>
+    {% endif %}
+</div>
+{% endblock %}

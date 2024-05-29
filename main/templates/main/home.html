@@ -1,0 +1,127 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div id="video-container" class="row justify-content-center">
+    {% for video in videos %}
+    <div class="col-lg-12 video-card">
+        <div class="card mb-4 shadow">
+            <div class="row no-gutters">
+                <div class="col-md-9">
+                    <video controls class="w-100">
+                        <source src="{{ video.file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="col-md-3 comments-sidebar">
+                    <div class="card-body">
+                        <h4 class="card-title"><strong>{{video.user.username}}</strong></h4>
+                        <p class="card-text"><strong>Exercise: </strong> {{ video.exercise_name }}</p>
+                        <p class="card-text"><strong>Analysis: </strong> {{ video.analysis }}</p>
+                        <hr class="custom-hr">
+                    </div>
+                    <div style="overflow-y: auto;">
+                        {% for comment in video.comments.all %}
+                            <div class="comment">
+                                <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                                <!-- Like form -->
+                                <form action="{% url 'like_comment' comment.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">❤️ ({{ comment.total_likes }})</button>
+                                </form>
+                                {% if is_own_profile %}
+                                <!-- Delete comment form -->
+                                <form action="{% url 'delete_comment' comment.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">🗑️</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <form method="post" action="{% url 'add_comment' video.id %}" class="d-flex">
+                                {% csrf_token %}
+                                <input type="text" name="text" class="form-control flex-grow-1" placeholder="Add a comment..." required>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">💬</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const commentForms = document.querySelectorAll('.comment-form');
+    commentForms.forEach(form => {
+        const submitBtn = form.querySelector('.submit-comment');
+        submitBtn.addEventListener('click', function() {
+            const videoId = form.getAttribute('data-video-id');
+            const formData = new FormData(form);
+            fetch(`/add-comment/${videoId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const commentsContainer = form.nextElementSibling;
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.innerHTML = `<p class="comment-text"><strong>${data.username}</strong>: ${data.text}</p>
+                                            <button type="button" class="like-comment btn btn-outline-secondary btn-sm" data-comment-id="${data.id}">
+                                                Like (0)
+                                            </button>`;
+                    commentsContainer.appendChild(newComment);
+                    form.reset(); // Reset form input after submission
+                }
+            })
+            .catch(error => console.error('Failed to add comment:', error));
+        });
+    });
+
+    const likeButtons = document.querySelectorAll('.like-comment');
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = button.getAttribute('data-comment-id');
+            fetch(`/like-comment/${commentId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.innerText = `Like (${data.total_likes})`; // Update like count on button
+            })
+            .catch(error => console.error('Failed to like comment:', error));
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

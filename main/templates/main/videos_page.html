@@ -1,0 +1,14 @@
+{% for video in videos %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <video class="card-img-top" controls>
+                <source src="{{ video.file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="card-body">
+                <h5 class="card-title">{{ video.exercise_name }}</h5>
+                <p class="card-text">{{ video.analysis }}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
