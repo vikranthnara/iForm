@@ -1,0 +1,46 @@
+.comments-sidebar {
+    width: 100%;
+    height: 450px;
+    overflow-y: auto;
+    padding: 5px;
+    border-top: 2px solid #333; /* Dark line above the comments */
+}
+
+.comment {
+    padding: 10px;
+    border-bottom: 2px solid #4a4848; /* Darker line between comments */
+    margin-bottom: 5px; /* Spacing between comments */
+    margin-left: 5px ;
+}
+
+/* Enhance the scrollbar visibility and interactivity */
+.comments-sidebar::-webkit-scrollbar {
+    width: 6px; /* Adjust the scrollbar width */
+}
+
+.comments-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Light grey track */
+}
+
+.comments-sidebar::-webkit-scrollbar-thumb {
+    background: #888; /* Darker grey scroll thumb */
+}
+
+.comments-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Even darker grey on hover */
+}
+
+
+.form-inline {
+    display: flex;
+    width: 100%;
+}
+
+.form-inline input[type="text"] {
+    flex-grow: 1; /* Takes up as much space as possible */
+    margin-right: 10px; /* Spacing between input and button */
+}
+
+.form-inline button {
+    white-space: nowrap; /* Ensures the text in the button doesn’t wrap */
+}

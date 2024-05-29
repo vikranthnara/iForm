@@ -1,0 +1,19 @@
+/* Custom styles for the profile page */
+.card-body h6 {
+    margin-top: 0;
+}
+
+.card-body .list-group {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.card-body .list-group-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.media-body {
+    display: flex;
+    flex-direction: column;
+}
