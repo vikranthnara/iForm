@@ -7,11 +7,11 @@ This Django-based video-sharing platform provides preliminary form analysis and 
 
 
 # Features
-User Authentication: Register, login, and manage user profiles.
-Video Uploads: Users can upload videos. 
-Comments and Likes: Users can comment on videos and like comments.
-Follow System: Users can follow other users to see their videos on the homepage. Notification Requests for private users. 
-Privacy Settings: Users can set their profiles to private or public.
+- User Authentication: Register, login, and manage user profiles.
+- Video Uploads: Users can upload videos. 
+- Comments and Likes: Users can comment on videos and like comments.
+- Follow System: Users can follow other users to see their videos on the homepage. Notification Requests for private users. 
+- Privacy Settings: Users can set their profiles to private or public.
 
 # Technologies
 Django: The project uses Django as the web framework.
