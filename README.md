@@ -15,7 +15,9 @@ This Django-based video-sharing platform provides preliminary form analysis and 
 
 # Technologies
 Django: The project uses Django as the web framework.
+
 SQLite: Default database for development.
+
 Bootstrap: For styling and responsive design.
 
 
